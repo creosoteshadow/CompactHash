@@ -2,20 +2,25 @@
 
 File CompactHash.h 
 - implements two hash functions:
-  - CompactHash	- an all-in-one hasher
-  - CompactHash_streaming - a streaming-capable hash class
+  - CompactHash (all-in-one): ~5% faster, simplest API for fixed buffers
+    - Performance:
+  	  - Bulk: 9.8-10.0 GB/s
+  	  - Small Key: 29-34 cycles/hash
+  - CompactHash_streaming: Incremental updates, identical output, slightly more flexible for large/unbuffered data
+    - Performance:
+    	- Bulk: 9.2-9.7 GB/s
+  		- Small Key: 37-52 cycles/hash
 - Both are non-cryptographic
-- Use wymix-style multiplication (inspired by rapidhash / wyhash)
-- 128-bit output. Both return identical results.
-- Both are based on the wyhash mixing function
+- Both produce identical 128-bit outputs.
+- Both are based on the wyhash mixing function (inspired by rapidhash / wyhash)
 - Passes all SMHasher tests (see results below)
 - CompactHash is approximately 5% faster than CompactHash_streaming
 - 100% C++, header-only
 - No external dependencies
-
+  
 CompactHash and CompactHash_streaming are fast, non-cryptographic hash functions written in modern C++.
 
-They designed for high throughput (targeting ~10 GB/s on modern hardware) while passing the full SMHasher test suite — a de-facto standard for evaluating non-cryptographic hashes.
+They are designed for high throughput (targeting ~10 GB/s on modern hardware) while passing the full SMHasher test suite — a de-facto standard for evaluating non-cryptographic hashes.
 
 ### Goals
 Clean, minimal, and focused on correctness + speed. 
@@ -36,7 +41,7 @@ Works with MSWindows/MSVC, not tested on other systems. Passes SMHasher/rurban.
       - Zeroes & ones patterns
 
 ### Usage
-  - See main.cpp for a simple demonstration.
+  - See main.cpp for a simple demonstration of both hashers.
 
 ### API Overview
 
