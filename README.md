@@ -1,6 +1,6 @@
-CompactHash
+## CompactHash
 
-CompactHash.h 
+File CompactHash.h 
 - implements two hash functions:
   - CompactHash	- an all-in-one hasher
   - CompactHash_streaming - a streaming-capable hash class
@@ -17,11 +17,13 @@ CompactHash and CompactHash_streaming are fast, non-cryptographic hash functions
 
 They designed for high throughput (targeting ~10 GB/s on modern hardware) while passing the full SMHasher test suite — a de-facto standard for evaluating non-cryptographic hashes.
 
-Goals: clean, minimal, and focused on correctness + speed. 
+### Goals
+Clean, minimal, and focused on correctness + speed. 
 
-Status: Works with MSWindows/MSVC, not tested on other systems. Passes SMHasher/rurban.
+### Status
+Works with MSWindows/MSVC, not tested on other systems. Passes SMHasher/rurban.
 
-Performance / Quality
+### Performance / Quality
   - Preliminary benchmarks show throughput around 10 GB/s on typical desktop CPUs (exact numbers depend on hardware, compiler flags, and workload).
   - Full results (all tests passing) are committed in SMHasher_results.txt.
       - No collisions or failures observed in the standard suite.
@@ -33,10 +35,27 @@ Performance / Quality
       - Differential & long-stream tests
       - Zeroes & ones patterns
 
-Usage
+### Usage
   - See main.cpp for a simple demonstration.
 
-Why another hash?
+### API Overview
+
+```cpp
+#include "CompactHash.h"
+
+// All-in-one (fastest)
+uint128_t hash = CompactHash::hash(data, len, seed);
+
+// Streaming version (same final result)
+int i=3;
+float f=3.5;
+std::string str = "California is big.";
+CompactHash_streaming hasher(seed);
+hasher << i << f << str;
+uint128_t hash = hasher.finalize();
+```
+
+### Why another hash?
   - CompactHash aims for an ultra-simple, high-quality sweet spot:
     - Better statistical quality than many "fast" hashes
     - Competitive speed with protected mixing (avoids some known weaknesses in unprotected wyhash-style)
@@ -46,10 +65,10 @@ Why another hash?
 
 Inspired by rapidhash, wyhash, xxHash, and SMHasher-driven development.
 
-Contributing
+### Contributing
   - Contributions welcome — especially benchmarks, ports, or fixes!
 
-License
+### License
   -MIT License
 
 Happy hashing!
