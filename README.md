@@ -4,7 +4,9 @@ CompactHash is a fast, non-cryptographic hash function written in modern C++.
 
 It is designed for high throughput (targeting ~10 GB/s on modern hardware) while passing the full SMHasher test suite — a de-facto standard for evaluating non-cryptographic hashes.
 
-Currently in early development — clean, minimal, and focused on correctness + speed.
+Currently in development. Goals: clean, minimal, and focused on correctness + speed. 
+
+Status: Works with MSWindows/MSVC, not tested on other systems. Passes SMHasher/rurban.
 
 Features
 
@@ -30,7 +32,6 @@ Performance / Quality
 
 Usage
   - See main.cpp for a simple demonstration.
-
 
 Why another hash?
   - CompactHash aims for an ultra-simple, high-quality sweet spot:
