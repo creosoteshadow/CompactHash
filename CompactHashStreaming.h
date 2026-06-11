@@ -50,6 +50,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 #include "PHI.h" // array of constants derived from the golden ratio
 
+#include <array>
 #include <cstdint>
 #include <iostream> // std::cerr
 #include <stdlib.h> // std::exit
