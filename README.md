@@ -1,6 +1,6 @@
 # CompactHash
 
-A minimalist, high-performance (10 GB/s) header-only 128-bit streaming hash function written in modern C++.
+A minimalist, non-cryptographic, high-performance (10 GB/s) header-only 128-bit streaming hash function written in modern C++.
 
 CompactHashStreaming is engineered specifically for modern superscalar CPU architectures. By decoupling the block-absorption loop from the finalization phase, it maximizes Instruction-Level Parallelism (ILP) to achieve speeds exceeding 10 GiB/sec, while passing 100% of SMHasher's adversarial quality, collision, and differential test suites.
 
