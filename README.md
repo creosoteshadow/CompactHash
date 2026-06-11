@@ -16,6 +16,8 @@ Hardware-Optimized Parallelism: Uses two entirely independent 64-bit lanes drive
 
 SMHasher Certified: Zero collisions or structural biases across billions of keys in Sparse, Cyclic, TwoBytes, and Windowed test suites.
 
+SMHasher Verification Value 0x6DD2EE3D 
+
 ## 🛠️ Design & Architecture
 
 Unlike traditional non-cryptographic hash functions that bottleneck the inner loop with frequent cross-lane mixing, CompactHashStreaming operates on a strict "Defer to Finalizer" philosophy:
