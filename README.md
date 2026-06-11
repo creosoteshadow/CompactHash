@@ -22,9 +22,9 @@ SMHasher Verification Value 0x6DD2EE3D
 
 Unlike traditional non-cryptographic hash functions that bottleneck the inner loop with frequent cross-lane mixing, CompactHashStreaming operates on a strict "Defer to Finalizer" philosophy:
 
-The Inner Loop (Absorption): Data is injected linearly into two separate 64-bit states (state[0] and state[1]). Each state is incremented by its own unique, independent, odd-numbered Weyl Sequence constant. Because there are no cross-lane data dependencies, a modern out-of-order CPU can process both lanes simultaneously.
+The Inner Loop (Absorption): Data is absorbed independently into two separate 64-bit lanes (state[0] and state[1]). Each lane combines incoming data with its own monotonically advancing Weyl sequence before undergoing a 64×64→128 multiply-based mixing step. The Weyl sequences ensure that identical data blocks are processed in distinct domains, preventing repeated-pattern resonance while preserving complete independence between the two lanes. Because there are no cross-lane dependencies in the absorption loop, modern out-of-order CPUs can execute both lanes simultaneously, maximizing instruction-level parallelism.
 
-The Finalizer (Diffusion): Heavy mixing is deferred entirely to the finalize() call. It utilizes a sequential cascade cross-mix using 128-bit hardware multiplication primitives (_umul128/__int128). state[0] mutates itself, and that newly scrambled state is immediately thrown into state[1]. This strict dependency chain completely atomizes any linear structural patterns before outputting the 128-bit result.
+The Finalizer (Diffusion): Cross-lane mixing is deferred entirely to the finalize() call. It utilizes a sequential cascade cross-mix using 128-bit hardware multiplication primitives (_umul128/__int128). state[0] mutates itself, and that newly scrambled state is immediately thrown into state[1]. This strict dependency chain completely atomizes any linear structural patterns before outputting the 128-bit result.
 
 ## 📊 Performance & SMHasher Results
 
