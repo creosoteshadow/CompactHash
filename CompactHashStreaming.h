@@ -64,6 +64,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 }
 
 
+
 class CompactHashStreaming {
 	static constexpr uint64_t SEED_MIX_0 = PHI[45];
 	static constexpr uint64_t SEED_MIX_1 = PHI[44];
@@ -130,7 +131,7 @@ public:
 
 	[[nodiscard]] std::array<uint64_t, 2> hash128() const {
 		// Copy state and counters so finalization 
-		// doesn't permanently destroy the internal stream state.
+		// doesn't permanently destroy the internal state.
 		CompactHashStreaming temp(*this);
 		return temp.finalize();
 	}
@@ -139,10 +140,22 @@ public:
 private:
 	static inline uint64_t wymix(uint64_t a, uint64_t b) noexcept {
 		uint64_t lo, hi;
+#ifdef _MSC_VER
 		lo = _umul128(a, b, &hi);
+#else
+		__uint128_t r = (__uint128_t)a * b;
+		lo = (uint64_t)r;
+		hi = (uint64_t)(r >> 64);
+#endif
+		/*
+		* wyhash's optional protection against multi-collision attacks uses (lo^hi) ^ (a^b). Since we are sometimes
+		* using this in the form wymix(x, x^constant) (see, for instance, in the constructor), this would
+		* reduce to (lo^hi) ^ constant, making the output independent of 'a' entirely
+		* when a == b. Keeping '^ b' instead ensures 'b' always influences the output
+		* regardless of the multiply result.
+		*/
 		return (lo ^ hi) ^ b;
 	}
-
 
 
 	// Inject 16 bytes into the state
@@ -151,8 +164,13 @@ private:
 		uint64_t word[2];
 		memcpy(word, input, 16);
 
-		state[0] = wymix(state[0], word[0] ^ (counter[0] += COUNTER_INCREMENT_0));
-		state[1] = wymix(state[1], word[1] ^ (counter[1] += COUNTER_INCREMENT_1));
+		// Architectural Note: A previous version used '=' assignment here. 
+		// However, if a word precisely matched the incremented counter, 
+		// wymix would output 0 and completely erase all accumulated historical entropy.
+		// Switching to '+=' acts as a feed-forward mechanism, ensuring a 
+		// zero-sink block merely acts as a no-op instead of a state wipe.
+		state[0] += wymix(state[0], word[0] ^ (counter[0] += COUNTER_INCREMENT_0));
+		state[1] += wymix(state[1], word[1] ^ (counter[1] += COUNTER_INCREMENT_1));
 	}
 
 	std::array<uint64_t, 2> finalize() {
@@ -182,6 +200,8 @@ private:
 		return { u0, u1 };
 	}
 };
+
+// SMHasher test harness
 void CompactHashStreaming_test(const void* key, int len, uint32_t seed, void* out) {
 	// SMHasher passes a 32-bit seed, but your implementation expects 64-bit.
 	// Upcasting is fine.
