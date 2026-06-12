@@ -16,7 +16,7 @@ Hardware-Optimized Parallelism: Uses two entirely independent 64-bit lanes drive
 
 SMHasher Certified: Zero collisions or structural biases across billions of keys in Sparse, Cyclic, TwoBytes, and Windowed test suites.
 
-SMHasher Verification Value 0x6DD2EE3D 
+SMHasher Verification Value 0xB9E69BE0
 
 ## 🛠️ Design & Architecture
 
